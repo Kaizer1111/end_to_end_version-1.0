@@ -1,0 +1,91 @@
+import requests as req
+import xml.etree.ElementTree as ET
+from bs4 import BeautifulSoup
+
+apikey = "your API key"
+start = 0
+after_word = "NONE"
+input_word = ""
+onepunch_word = ['늄', '슘', '륨', '쁨', '캣', '켓', '즘', '븀', '튬', '긶', '탉', '듐', '듭', '즙', '녘', '픈', '볜'
+                 '긿', '읖', '럽', '렁', '슨', '줘', '뮴', '듈', '럴', '븐', '잫', '윰', '쨤', '릏', '깥', '텝', '텋', '쨩']
+DUMM = {'녀': '여', '뇨': '요', '뉴': '유', '니': '이', '녜': '예', '랴': '야', '려': '여', '례': '예', '료': '요',
+        '류': '유', '리': '이', '라': '나', '래': '내', '로': '노', '뢰': '뇌', '루': '누', '르': '느',
+        '락': '낙', '란': '난', '랄': '날', '람': '남', '랍': '납', '랏': '낫', '랑': '낭', '랭': '냉', '냑': '약',
+        '략': '약', '냥': '양', '량': '양', '녁': '역', '력': '역', '년': '연', '련': '연', '녈': '열',
+        '렬': '열', '념': '염', '렴': '염', '렵': '엽', '녕': '영', '령': '영', '록': '녹', '론': '논', '롱': '농',
+        '룡': '용', '뉵': '육', '륙': '육', '륜': '윤', '률': '율', '륭': '융', '륵': '늑', '름': '늠',
+        '릉': '능', '린': '인', '림': '임', '립': '입'}
+already_use = []
+
+def end_to_end():
+    global apikey, start, after_word, input_word, DUMM, already_use
+    while True:
+        if start != 0:
+            input_word = str(input("\n" + after_word + ' -> '))
+        else:
+            input_word = str(input("\n단어를 입력하세요 : "))
+        input_word = input_word.strip()
+        if (input_word == '끝') or (input_word == '그만') or (input_word == '멈춰') or (input_word == 'end') or (input_word == 'stop'):
+            break
+        url = 'https://stdict.korean.go.kr/api/search.do?certkey_no=2948&key=' + apikey + '&type_search=search&q=' + input_word + '&sort=dict'
+        xml = req.get(url)
+        root = ET.fromstring(xml.text)
+
+        descrip = root.iter(tag="definition")
+        try:
+            findpos = root.find("item").findtext("pos")
+
+        except AttributeError:
+            findpos = "NONE"
+        max = 0
+        if len(input_word) > 1:
+            if input_word not in already_use:
+                if findpos == '명사':
+                    if input_word[-1] not in onepunch_word:
+                        if start != 0:
+                            if after_word[-1] == input_word[0]:
+                                print('<' + input_word + '>')
+                                for element in descrip:
+                                    if max == 3:
+                                        break
+                                    print(element.text)
+                                    max += 1
+                                after_word = input_word
+                                already_use.append(after_word)
+                            else:
+                                if after_word[-1] in DUMM:
+                                    after_word = after_word[:-2] + DUMM[str(after_word[-1])]
+                                    if after_word[-1] == input_word[0]:
+                                        print('<' + input_word + '>')
+                                        for element in descrip:
+                                            if max == 3:
+                                                break
+                                            print(element.text)
+                                            max += 1
+                                        after_word = input_word
+                                        already_use.append(after_word)
+                                    else:
+                                        print("앞 단어의 끝자를 이어받아야 합니다.")
+                                else:
+                                    print("앞 단어의 끝자를 이어받아야 합니다.")
+                        else:
+                            print('<' + input_word + '>')
+                            for element in descrip:
+                                if max == 3:
+                                    break
+                                print(element.text)
+                                max += 1
+                            after_word = input_word
+                            already_use.append(after_word)
+                        start = 1
+                    else:
+                        print("한방단어는 사용할 수 없습니다.")
+                else:
+                    print("명사만 가능합니다.")
+            else:
+                print("이미 사용한 단어입니다.")
+        else:
+            print("단어는 한글자 이상이어야 합니다.")
+
+end_to_end()
+print(f"\n{'='* 60}\n끝말잇기를 종료합니다.\n{'=' * 60}")

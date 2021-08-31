@@ -15,4 +15,5 @@
 `참고 사항 : version 1.0은 혼자서밖에 플레이 불가능합니다^^`
 
 ```
-git clone 
+git clone https://github.com/Kaizer1111/end_to_end_version-1.0.git
+```

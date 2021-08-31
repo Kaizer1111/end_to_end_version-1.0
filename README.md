@@ -18,3 +18,5 @@
 ```
 git clone https://github.com/Kaizer1111/end_to_end_version-1.0.git
 ```
+
+`현재 version 2.0도 개발중입니다...`

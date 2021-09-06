@@ -19,5 +19,6 @@
 git clone https://github.com/Kaizer1111/end_to_end_version-1.0.git
 ```
 
+`이 프로그램은 한국어만 지원합니다`
 
 `현재 version 2.0도 개발중입니다...`
